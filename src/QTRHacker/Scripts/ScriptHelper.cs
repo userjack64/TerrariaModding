@@ -1,4 +1,4 @@
-﻿using QHackCLR.Common;
+using QHackCLR.Common;
 using QHackLib.Assemble;
 using QHackLib.Memory;
 using QTRHacker.Core;
@@ -29,11 +29,20 @@ public static class ScriptHelper
 	{
 		return context.HContext.DataAccess.Read<T>(addr);
 	}
-	public static unsafe void Write<T>(GameContext context, nuint addr, T value) where T : unmanaged
+    public static byte[] ReadBytes(GameContext context, nuint addr, uint count)
+    {
+        // DataAccess 底层通常都有 ReadBytes 方法
+        return context.HContext.DataAccess.ReadBytes(addr, count);
+    }
+    public static unsafe void Write<T>(GameContext context, nuint addr, T value) where T : unmanaged
 	{
 		context.HContext.DataAccess.Write(addr, value);
 	}
-	public static void AobReplaceASM(GameContext Context, string asm, string target)
+    public static void WriteBytes(GameContext context, nuint addr, byte[] values)
+    {
+        context.HContext.DataAccess.WriteBytes(addr, values);
+    }
+    public static void AobReplaceASM(GameContext Context, string asm, string target)
 	{
 		var addrs = AobscanHelper.AobscanASM(Context.HContext.Handle, asm);
 		byte[] code = Assembler.Assemble(target, 0);
